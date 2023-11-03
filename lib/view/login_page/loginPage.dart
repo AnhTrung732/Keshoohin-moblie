@@ -1,157 +1,336 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
+import 'package:go_router/go_router.dart';
+import 'package:keshoohin/utils/route_names.dart';
+
+import '../../services/firebase oauth/login.dart';
+import '../../utils/constant.dart';
 
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  FocusNode inputNode = FocusNode();
-  bool isHidePassword = true;
-  bool isAwaiting = false;
+  bool _rememberMe = false;
+
+  Widget _buildEmailTF() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const Text(
+          'Email',
+          style: kLabelStyle,
+        ),
+        const SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: kBoxDecorationStyle,
+          height: 60.0,
+          child: const TextField(
+            keyboardType: TextInputType.emailAddress,
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'OpenSans',
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14.0),
+              prefixIcon: Icon(
+                Icons.email,
+                color: Colors.white,
+              ),
+              hintText: 'Enter your Email',
+              hintStyle: kHintTextStyle,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPasswordTF() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const Text(
+          'Password',
+          style: kLabelStyle,
+        ),
+        const SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: kBoxDecorationStyle,
+          height: 60.0,
+          child: const TextField(
+            obscureText: true,
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'OpenSans',
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14.0),
+              prefixIcon: Icon(
+                Icons.lock,
+                color: Colors.white,
+              ),
+              hintText: 'Enter your Password',
+              hintStyle: kHintTextStyle,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildForgotPasswordBtn() {
+    return Container(
+      alignment: Alignment.centerRight,
+      child: TextButton(
+        onPressed: () => {},
+        child: const Padding(
+          padding: EdgeInsets.only(right: 0.0),
+          child: Text(
+            'Forgot Password?',
+            style: kLabelStyle,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRememberMeCheckbox() {
+    return SizedBox(
+      height: 20.0,
+      child: Row(
+        children: <Widget>[
+          Theme(
+            data: ThemeData(unselectedWidgetColor: Colors.white),
+            child: Checkbox(
+              value: _rememberMe,
+              checkColor: Colors.green,
+              activeColor: Colors.white,
+              onChanged: (value) {
+                setState(() {
+                  _rememberMe = value!;
+                });
+              },
+            ),
+          ),
+          const Text(
+            'Remember me',
+            style: kLabelStyle,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoginBtn() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 25.0),
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () => {},
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0)),
+          backgroundColor: Colors.white,
+        ),
+        child: const Padding(
+          padding: EdgeInsets.all(15.0),
+          child: Text(
+            'LOGIN',
+            style: TextStyle(
+              color: Color(0xFF624d7e),
+              letterSpacing: 1.5,
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'OpenSans',
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSignInWithText() {
+    return const Column(
+      children: <Widget>[
+        Text(
+          '- OR -',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        SizedBox(height: 20.0),
+        Text(
+          'Sign in with',
+          style: kLabelStyle,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSocialBtn(void Function()? onTap, AssetImage logo) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 60.0,
+        width: 60.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              offset: Offset(0, 2),
+              blurRadius: 6.0,
+            ),
+          ],
+          image: DecorationImage(
+            image: logo,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSocialBtnRow() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 30.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          _buildSocialBtn(
+                () => print('Login with Facebook'),
+            const AssetImage(
+              'assets/icons/facebook.jpg',
+            ),
+          ),
+          _buildSocialBtn(
+                () => _handleGoogleLogin(),
+            const AssetImage(
+              'assets/icons/google.jpg',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSignupBtn() {
+    return GestureDetector(
+      onTap: () => print('Sign Up Button Pressed'),
+      child: RichText(
+        text: const TextSpan(
+          children: [
+            TextSpan(
+              text: 'Don\'t have an Account? ',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            TextSpan(
+              text: 'Sign Up',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SingleChildScrollView(
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
           child: Stack(
-            fit: StackFit.loose,
             children: <Widget>[
               Container(
-                child: Center(
-                    child: AppBar(
-                      title: const Text(
-                        'Đăng nhập',
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
-                      centerTitle: true,
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                    )),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 50),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  //mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    //SizedBox(height: 25.0),
-                    Container(
-                      margin: const EdgeInsets.only(top: 100),
-                      child: TextFormField(
-                        autofocus: true,
-                        style: const TextStyle(fontSize: 20),
-                        keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(
-                            labelText: "Số điện thoại",
-                            hintText: "Nhập số điện thoại",
-                            labelStyle:
-                            TextStyle(color: Color(0xff888888), fontSize: 20),
-                            hintStyle:
-                            TextStyle(color: Color(0xff888888), fontSize: 20)),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 30),
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: TextFormField(
-                        obscureText: isHidePassword,
-                        decoration: InputDecoration(
-                            labelText: "Mật khẩu",
-                            hintText: "Nhập mật khẩu",
-                            labelStyle: const TextStyle(
-                                color: Color(0xff888888), fontSize: 20),
-                            hintStyle:
-                            const TextStyle(color: Color(0xff888888), fontSize: 20),
-                            suffixIcon: InkWell(
-                                onTap: _togglePasswordView,
-                                child: const Icon(
-                                  Icons.visibility,
-                                ))),
-                      ),
-                    ),
-
-                    Container(
-                      margin: const EdgeInsets.only(top: 50),
-                      child: OutlinedButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                            const MaterialStatePropertyAll<Color>(Colors.black),
-                            shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5.0)))),
-                        onPressed: () {},
-                        child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 110),
-                            child: const Text(
-                              'Đăng nhập',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                              ),
-                            )),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 20),
-                      child: const Text('Hoặc đăng nhập bằng tài khoản khác'),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 20),
-                      child: SignInButton(
-                        Buttons.Google,
-                        text: "Đăng nhập bằng Google",
-                        onPressed: () {
-                          setState(() {
-                            this.isAwaiting = true;
-                          });
-
-                          // Authentication.signInWithGoogle().then((value) =>
-                          //     Navigator.pushAndRemoveUntil(
-                          //         context,
-                          //         PageTransition(
-                          //             type: PageTransitionType.rightToLeftWithFade,
-                          //             child: MyApp(),
-                          //             childCurrent: widget),
-                          //             (Route route) => false));
-                        },
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 10),
-                      child: SignInButton(
-                        Buttons.Facebook,
-                        text: "Đăng nhập bằng Facebook",
-                        onPressed: () {},
-                      ),
-                    ),
-                  ],
+                height: double.infinity,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFF478876),
+                      Color(0xFF4D8473),
+                      Color(0xFF548071),
+                      Color(0xFF5A7E6E),
+                      Color(0xFF617C6B),
+                      Color(0xFF687A68),
+                      Color(0xFF6E7865),
+                      Color(0xFF757663),
+                      Color(0xFF7B7460),
+                      Color(0xFF82725D),
+                    ],
+                    stops: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+                  ),
                 ),
               ),
-              // if (this.isAwaiting == true)
-              //   Container(
-              //       width: double.infinity,
-              //       height: double.infinity,
-              //       color: Colors.white,
-              //       child: const RiveAnimation.asset('assets/icons/delivery.riv'))
+              SizedBox(
+                height: double.infinity,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40.0,
+                    vertical: 120.0,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const Text(
+                        'Sign In',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'OpenSans',
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 30.0),
+                      _buildEmailTF(),
+                      const SizedBox(
+                        height: 30.0,
+                      ),
+                      _buildPasswordTF(),
+                      _buildForgotPasswordBtn(),
+                      _buildRememberMeCheckbox(),
+                      _buildLoginBtn(),
+                      _buildSignInWithText(),
+                      _buildSocialBtnRow(),
+                      _buildSignupBtn(),
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
-          //children: [IconButton(onPressed: () {}, icon: Icon(Icons.login))],
-        ));
+        ),
+      ),
+    );
   }
 
-  void _togglePasswordView() {
-    setState(() {
-      isHidePassword = !isHidePassword;
-    });
+  _handleGoogleLogin() {
+    FirebaseAuthenticationService oauth = FirebaseAuthenticationService();
+    oauth.signInWithGoogle().then((value) => context.pushNamed(RouteNames.mainPage));
   }
 }

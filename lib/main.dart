@@ -1,11 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:keshoohin/utils/routes.dart';
 import 'package:keshoohin/view/welcome_page/welcomePage.dart';
 
-void main() async {
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await Firebase.initializeApp();
   await EasyLocalization.ensureInitialized();
 
   runApp(
@@ -31,6 +33,7 @@ class _KeShoohinAppState extends State<KeShoohinApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: appRouter.router,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

@@ -4,6 +4,8 @@ import 'package:keshoohin/utils/route_names.dart';
 import 'package:keshoohin/view/login_page/loginPage.dart';
 import 'package:keshoohin/view/welcome_page/welcomePage.dart';
 
+import '../view/main_page/mainPage.dart';
+
 class AppRouter {
   final GoRouter _router = GoRouter(routes: [
     GoRoute(
@@ -24,7 +26,22 @@ class AppRouter {
                                   end: const Offset(0.0, 0.0),
                                 ).animate(animation),
                                 child: child),
-                  ))
+                  )),
+          GoRoute(
+              name: RouteNames.mainPage,
+              path: "main_page",
+              pageBuilder: (context, state) => CustomTransitionPage<void>(
+                key: state.pageKey,
+                child: const MainPage(),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) =>
+                    SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(-1.0, 0.0),
+                          end: const Offset(0.0, 0.0),
+                        ).animate(animation),
+                        child: child),
+              ))
         ])
   ]);
 
