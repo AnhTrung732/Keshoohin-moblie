@@ -331,6 +331,6 @@ class _LoginPageState extends State<LoginPage> {
 
   _handleGoogleLogin() {
     FirebaseAuthenticationService oauth = FirebaseAuthenticationService();
-    oauth.signInWithGoogle().then((value) => context.pushNamed(RouteNames.mainPage));
+    oauth.signInWithGoogle().then((value) => context.goNamed(RouteNames.mainPage));
   }
 }

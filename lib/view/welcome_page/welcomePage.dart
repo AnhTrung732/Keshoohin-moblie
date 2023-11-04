@@ -2,20 +2,37 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:keshoohin/utils/route_names.dart';
+import 'package:keshoohin/view/main_page/mainPage.dart';
 import 'package:page_transition/page_transition.dart';
 
+import '../../services/shared preferences/sharedPreferences.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      debugShowCheckedModeBanner: false,
-      home: const WelcomeScreen(),
+    return FutureBuilder(
+      future: SharedPreferencesObject().futureGetIdCus(),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data == 0) {
+            return MaterialApp(
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              debugShowCheckedModeBanner: false,
+              home: const WelcomeScreen(),
+            );
+          } else {
+            return const MainPage();
+          }
+        } else {
+          return Container(
+            color: Colors.white,
+          );
+        }
+      },
     );
   }
 }
@@ -110,7 +127,8 @@ class WelcomeTextAnimation extends StatelessWidget {
   final TextStyle style;
   final Duration duration;
 
-  const WelcomeTextAnimation({super.key,
+  const WelcomeTextAnimation({
+    super.key,
     required this.text,
     required this.style,
     required this.duration,
@@ -168,13 +186,21 @@ class WelcomeActionRow extends StatelessWidget {
           onTap: () => context.pushNamed(RouteNames.loginPage),
           child: Text(
             "login".tr(),
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
         Row(
           children: [
             GestureDetector(
-              child: Text("skip".tr(), style: const TextStyle(color: Colors.white)),
+              onTap: () {
+                while (context.canPop()) {
+                  context.pop();
+                }
+                context.pushReplacementNamed(RouteNames.mainPage);
+              },
+              child: Text("skip".tr(),
+                  style: const TextStyle(color: Colors.white)),
             ),
             const SizedBox(width: 15),
             if (context.locale.languageCode == "vn")
@@ -198,7 +224,8 @@ class WelcomeLanguageSwitch extends StatelessWidget {
   final Locale locale;
   final String flagImage;
 
-  const WelcomeLanguageSwitch({super.key,
+  const WelcomeLanguageSwitch({
+    super.key,
     required this.locale,
     required this.flagImage,
   });
@@ -222,4 +249,3 @@ class WelcomeLanguageSwitch extends StatelessWidget {
     );
   }
 }
-
