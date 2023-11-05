@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "950787245162",
+    "project_id": "keshoohin-mobile-app-8d0dd",
+    "storage_bucket": "keshoohin-mobile-app-8d0dd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950787245162:android:d1b8b03fec74a3c3aef613",
+        "android_client_info": {
+          "package_name": "com.example.keshoohin_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBa2zb1xak0PJNv17cm54cnVf6Atbil4ZQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
