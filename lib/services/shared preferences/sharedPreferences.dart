@@ -1,6 +1,7 @@
+import 'package:keshoohin/domain/entities/account/account.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../models/account/account.dart';
+
 
 class SharedPreferencesObject {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -111,9 +112,10 @@ class SharedPreferencesObject {
   Future<int> futureGetIdCus() async {
     final prefs = await _prefs;
     final id = prefs.getString('idcus');
-    if (id != null)
+    if (id != null) {
       return int.parse(id);
-    else
+    } else {
       return 0;
+    }
   }
 }

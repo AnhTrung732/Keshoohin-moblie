@@ -1,15 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:keshoohin/utils/routes.dart';
-import 'package:keshoohin/view/welcome_page/welcomePage.dart';
+import 'package:get_it/get_it.dart';
+import 'app/navigator/routes.dart';
+import 'di/app_module.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
   await EasyLocalization.ensureInitialized();
-
+  configureDependencies();
   runApp(
       EasyLocalization(
           supportedLocales: const [Locale('en', 'US'), Locale('vn', 'VN')],
@@ -27,7 +28,7 @@ class KeShoohinApp extends StatefulWidget {
 }
 
 class _KeShoohinAppState extends State<KeShoohinApp> {
-  final AppRouter appRouter = AppRouter(); // Create an instance of AppRouter
+  final appRouter = GetIt.I.get<AppRouter>(); // Create an instance of AppRouter
 
   @override
   Widget build(BuildContext context) {

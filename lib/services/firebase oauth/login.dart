@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import '../../models/account/account.dart';
-import '../../utils/constant.dart';
+import 'package:keshoohin/data/constants.dart';
+import 'package:keshoohin/domain/entities/account/account.dart';
 import '../shared preferences/sharedPreferences.dart';
 
 abstract class AuthenticationService {
